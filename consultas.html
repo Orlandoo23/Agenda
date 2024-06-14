@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultados de la Búsqueda</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: -webkit-linear-gradient(left, #25c481, #25b7c4);
+            background: linear-gradient(to right, #25c481, #25b7c4);
+            margin: 0;
+            padding: 0;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #000; /* Cambio de color del texto a negro */
+            text-align: center;
+        }
+        section {
+            margin: 50px;
+            background: #fff;
+            box-shadow: 0 10px 20px 0 rgba(0,0,0,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            width: 80%;
+        }
+        h1 {
+            font-size: 24px;
+            text-transform: uppercase;
+            margin: 0;
+            padding: 20px;
+            background: #333;
+            color: #fff;
+        }
+        .tbl-header {
+            background-color: rgba(255,255,255,0.3);
+        }
+        .tbl-content {
+            height: 300px;
+            overflow-x: auto;
+            margin-top: 0;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+        th, td {
+            padding: 15px;
+            text-align: left;
+            font-size: 12px;
+            color: #000; /* Cambio de color del texto a negro */
+        }
+        th {
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+        td {
+            vertical-align: middle;
+            font-weight: 300;
+            border-bottom: solid 1px rgba(255,255,255,0.1);
+        }
+        .btn {
+            width: 130px;
+            height: 40px;
+            margin-top: 20px; /* Añadido para separar el botón del resultado de búsqueda */
+            font-size: 1.1em;
+            cursor: pointer;
+            background-color: #171717;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            transition: all .4s;
+        }
+        .btn:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 7px 0 -2px #f85959, 0 15px 0 -4px #39a2db, 0 16px 10px -3px #39a2db;
+        }
+        .btn:active {
+            transform: translateY(-5px);
+            box-shadow: 0 2px 0 -2px #f85959, 0 8px 0 -4px #39a2db, 0 12px 10px -3px #39a2db;
+        }
+    </style>
+</head>
+<body>
+    <h1>Resultados de la Búsqueda</h1>
+    <section class="tbl-header">
+        <table cellpadding="0" cellspacing="0" border="0">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Usuario</th>
+                    <th>Teléfono</th>
+                    <th>Correo</th>
+                    <th>Dirección</th>
+                    <th>Contraseña</th>
+                </tr>
+            </thead>
+        </table>
+    </section>
+    <section class="tbl-content">
+        <table cellpadding="0" cellspacing="0" border="0">
+            <tbody>
+                <?php
+                // Validamos datos del servidor
+                $user = "root";
+                $pass = "";
+                $host = "localhost";
+
+                // Conectamos a la base de datos
+                $connection = mysqli_connect($host, $user, $pass);
+
+                // Verificamos la conexión a la base de datos
+                if (!$connection) {
+                    echo "No se ha podido conectar con el servidor" . mysql_error();
+                } else {
+                    // Indicamos el nombre de la base de datos
+                    $datab = "dbformulario";
+
+                    // Seleccionamos la base de datos
+                    $db = mysqli_select_db($connection, $datab);
+
+                    if (!$db) {
+                        echo "No se ha podido encontrar la Tabla";
+                    } else {
+                        // Realizamos la consulta de búsqueda
+                        $query = $_GET['query'];
+                        $consulta = "SELECT * FROM tabla_form WHERE nombre LIKE '%$query%' OR usuario LIKE '%$query%' OR telefono LIKE '%$query%' OR correo LIKE '%$query%' OR direccion LIKE '%$query%'";
+                        $result = mysqli_query($connection, $consulta);
+
+                        if (!$result) {
+                            echo "No se ha podido realizar la consulta";
+                        } else {
+                            while ($colum = mysqli_fetch_array($result)) {
+                                echo "<tr>";
+                                echo "<td>" . $colum['id'] . "</td>";
+                                echo "<td>" . $colum['nombre'] . "</td>";
+                                echo "<td>" . $colum['usuario'] . "</td>";
+                                echo "<td>" . $colum['telefono'] . "</td>";
+                                echo "<td>" . $colum['correo'] . "</td>";
+                                echo "<td>" . $colum['direccion'] . "</td>";
+                                echo "<td>" . $colum['contraseña'] . "</td>";
+                                echo "</tr>";
+                            }
+                        }
+
+                        // Cerramos la conexión
+                        mysqli_close($connection);
+                    }
+                }
+                ?>
+            </tbody>
+        </table>
+    </section>
+    <button class="btn" onclick="window.location.href = 'registro.html';">Regresar</button>
+</body>
+</html>
